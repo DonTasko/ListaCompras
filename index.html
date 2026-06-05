@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="pt" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <meta name="theme-color" content="#2D6A4F" />
+  <meta name="description" content="Lista de Compras Inteligente — gere as suas compras de forma simples e rápida." />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Lista+" />
+
+  <title>Lista de Compras Inteligente</title>
+
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<!-- ====== SPLASH SCREEN ====== -->
+<div id="splash" class="splash">
+  <div class="splash-logo">
+    <div class="splash-icon">🛒</div>
+    <h1 class="splash-title">Lista<span>+</span></h1>
+    <p class="splash-sub">Compras inteligentes</p>
+  </div>
+</div>
+
+<!-- ====== APP SHELL ====== -->
+<div id="app" class="app hidden">
+
+  <!-- HEADER -->
+  <header class="app-header" id="appHeader">
+    <div class="header-left">
+      <button class="btn-icon" id="btnMenu" aria-label="Menu">
+        <svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+      <span class="header-logo">Lista<span>+</span></span>
+    </div>
+    <div class="header-right">
+      <button class="btn-icon" id="btnSearch" aria-label="Pesquisar">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/><path d="m21 21-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+      <button class="btn-icon" id="btnInstall" aria-label="Instalar app" style="display:none">
+        <svg viewBox="0 0 24 24"><path d="M12 2v14m0 0-4-4m4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 20h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- SEARCH BAR -->
+  <div class="search-bar hidden" id="searchBar">
+    <input type="search" id="searchInput" placeholder="Pesquisar produtos, listas..." autocomplete="off" />
+    <button class="btn-icon" id="btnCloseSearch">
+      <svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+
+  <!-- DRAWER MENU -->
+  <div class="drawer-overlay hidden" id="drawerOverlay"></div>
+  <nav class="drawer hidden" id="drawer">
+    <div class="drawer-header">
+      <span class="drawer-logo">Lista<span>+</span></span>
+      <button class="btn-icon" id="btnCloseDrawer">
+        <svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <ul class="drawer-nav">
+      <li><button data-view="home" class="drawer-item active">🏠 Início</button></li>
+      <li><button data-view="favorites" class="drawer-item">⭐ Favoritos</button></li>
+      <li><button data-view="history" class="drawer-item">📋 Histórico</button></li>
+      <li><button data-view="stats" class="drawer-item">📊 Estatísticas</button></li>
+      <li><button data-view="settings" class="drawer-item">⚙️ Definições</button></li>
+    </ul>
+    <div class="drawer-footer">
+      <p>Versão 1.0.0</p>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content" id="mainContent">
+
+    <!-- ===== HOME VIEW ===== -->
+    <section class="view active" id="viewHome">
+      <!-- Stats Summary -->
+      <div class="stats-strip" id="statsStrip" style="display:none">
+        <div class="stat-chip"><span id="statProducts">0</span> produtos</div>
+        <div class="stat-chip bought"><span id="statBought">0</span> comprados</div>
+        <div class="stat-chip money">€<span id="statTotal">0.00</span></div>
+      </div>
+
+      <!-- Active List -->
+      <div id="activeListArea" style="display:none">
+        <div class="list-toolbar">
+          <div class="list-title-row">
+            <h2 id="activeListName" class="list-name editable" contenteditable="true" spellcheck="false"></h2>
+            <div class="list-actions">
+              <button class="btn-icon btn-sm" id="btnDuplicateList" title="Duplicar lista">
+                <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" stroke="currentColor" stroke-width="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              </button>
+              <button class="btn-icon btn-sm btn-danger" id="btnDeleteList" title="Apagar lista">
+                <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M19 6l-1 14H6L5 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M10 11v6M14 11v6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              </button>
+            </div>
+          </div>
+          <!-- Progress bar -->
+          <div class="progress-row">
+            <div class="progress-bar-track"><div class="progress-bar-fill" id="progressFill"></div></div>
+            <span class="progress-pct" id="progressPct">0%</span>
+          </div>
+        </div>
+
+        <!-- Category filter -->
+        <div class="cat-filter" id="catFilter">
+          <button class="cat-pill active" data-cat="all">Todos</button>
+        </div>
+
+        <!-- Product list -->
+        <ul class="product-list" id="productList"></ul>
+
+        <!-- Add product form -->
+        <div class="add-product-card" id="addProductCard">
+          <h3 class="form-title">Adicionar Produto</h3>
+          <div class="form-row">
+            <input type="text" id="inpName" placeholder="Nome do produto *" class="inp" autocomplete="off" />
+            <button class="btn-fav-toggle" id="btnFavToggle" title="Favorito">⭐</button>
+          </div>
+          <div class="form-row">
+            <input type="number" id="inpQty" placeholder="Qtd" class="inp inp-sm" min="0.01" step="0.01" value="1" />
+            <select id="inpUnit" class="inp inp-sm">
+              <option value="un">un</option>
+              <option value="kg">kg</option>
+              <option value="g">g</option>
+              <option value="l">l</option>
+              <option value="ml">ml</option>
+              <option value="cx">cx</option>
+              <option value="pct">pct</option>
+            </select>
+            <input type="number" id="inpPrice" placeholder="€ preço" class="inp inp-sm" min="0" step="0.01" />
+          </div>
+          <div class="form-row">
+            <select id="inpCat" class="inp">
+              <option value="Outros">Outros</option>
+              <option value="Frutas">🍎 Frutas</option>
+              <option value="Legumes">🥦 Legumes</option>
+              <option value="Carne">🥩 Carne</option>
+              <option value="Peixe">🐟 Peixe</option>
+              <option value="Lacticínios">🧀 Lacticínios</option>
+              <option value="Congelados">🧊 Congelados</option>
+              <option value="Bebidas">🥤 Bebidas</option>
+              <option value="Higiene">🧴 Higiene</option>
+              <option value="Limpeza">🧹 Limpeza</option>
+            </select>
+            <button class="btn-sm btn-outline" id="btnNewCat">+ Cat.</button>
+          </div>
+          <button class="btn-primary btn-full" id="btnAddProduct">Adicionar à Lista</button>
+        </div>
+      </div>
+
+      <!-- Empty state / Lists overview -->
+      <div id="listsOverview">
+        <div class="section-header">
+          <h2 class="section-title">As Minhas Listas</h2>
+        </div>
+        <div class="lists-grid" id="listsGrid"></div>
+        <div class="empty-state" id="emptyState" style="display:none">
+          <div class="empty-icon">🛍️</div>
+          <p>Ainda não tem listas.</p>
+          <p class="empty-sub">Crie a sua primeira lista de compras!</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== FAVORITES VIEW ===== -->
+    <section class="view" id="viewFavorites">
+      <div class="view-header"><h2>⭐ Favoritos</h2></div>
+      <p class="view-desc">Adicione rapidamente os seus produtos favoritos à lista ativa.</p>
+      <ul class="favorites-list" id="favoritesList"></ul>
+      <div class="empty-state" id="favEmpty" style="display:none">
+        <div class="empty-icon">⭐</div>
+        <p>Nenhum favorito ainda.</p>
+        <p class="empty-sub">Marque produtos como ⭐ ao adicioná-los.</p>
+      </div>
+    </section>
+
+    <!-- ===== HISTORY VIEW ===== -->
+    <section class="view" id="viewHistory">
+      <div class="view-header"><h2>📋 Histórico</h2></div>
+      <p class="view-desc">Reutilize listas anteriores com um clique.</p>
+      <!-- AdMob placeholder -->
+      <div class="admob-banner" id="admobHistory">
+        <span>📢 Espaço publicitário</span>
+      </div>
+      <ul class="history-list" id="historyList"></ul>
+      <div class="empty-state" id="historyEmpty" style="display:none">
+        <div class="empty-icon">📋</div>
+        <p>Sem histórico ainda.</p>
+      </div>
+    </section>
+
+    <!-- ===== STATS VIEW ===== -->
+    <section class="view" id="viewStats">
+      <div class="view-header"><h2>📊 Estatísticas</h2></div>
+      <div class="stats-grid" id="statsGrid">
+        <div class="stat-card"><div class="stat-icon">📋</div><div class="stat-val" id="sTotalLists">0</div><div class="stat-lbl">Listas criadas</div></div>
+        <div class="stat-card"><div class="stat-icon">📦</div><div class="stat-val" id="sTotalProducts">0</div><div class="stat-lbl">Produtos únicos</div></div>
+        <div class="stat-card"><div class="stat-icon">✅</div><div class="stat-val" id="sTotalBought">0</div><div class="stat-lbl">Já comprados</div></div>
+        <div class="stat-card highlight"><div class="stat-icon">💶</div><div class="stat-val">€<span id="sTotalSpent">0.00</span></div><div class="stat-lbl">Estimativa total gasta</div></div>
+        <div class="stat-card"><div class="stat-icon">⭐</div><div class="stat-val" id="sTotalFavs">0</div><div class="stat-lbl">Favoritos</div></div>
+        <div class="stat-card"><div class="stat-icon">🏷️</div><div class="stat-val" id="sTopCat">—</div><div class="stat-lbl">Categoria favorita</div></div>
+      </div>
+    </section>
+
+    <!-- ===== SETTINGS VIEW ===== -->
+    <section class="view" id="viewSettings">
+      <div class="view-header"><h2>⚙️ Definições</h2></div>
+      <div class="settings-group">
+        <h3>Dados</h3>
+        <button class="btn-outline btn-full" id="btnExportData">📤 Exportar dados (JSON)</button>
+        <button class="btn-outline btn-full danger" id="btnClearAll">🗑️ Limpar todos os dados</button>
+      </div>
+      <div class="settings-group">
+        <h3>Categorias Personalizadas</h3>
+        <div id="customCatsList"></div>
+        <div class="form-row">
+          <input type="text" id="inpNewCatName" placeholder="Nova categoria..." class="inp" />
+          <button class="btn-primary" id="btnSaveCat">Adicionar</button>
+        </div>
+      </div>
+      <div class="settings-group">
+        <h3>Sobre</h3>
+        <p class="settings-info">Lista de Compras Inteligente v1.0.0<br>PWA — funciona offline<br>Preparada para Google AdMob</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav" id="bottomNav">
+    <button class="nav-item active" data-view="home">
+      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="currentColor" stroke-width="2" fill="none"/><polyline points="9 22 9 12 15 12 15 22" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+      <span>Início</span>
+    </button>
+    <button class="nav-item" data-view="favorites">
+      <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+      <span>Favoritos</span>
+    </button>
+    <!-- FAB NEW LIST -->
+    <div class="nav-fab-wrap">
+      <button class="nav-fab" id="btnNewList" aria-label="Nova lista">
+        <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <button class="nav-item" data-view="history">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/><polyline points="12 6 12 12 16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
+      <span>Histórico</span>
+    </button>
+    <button class="nav-item" data-view="stats">
+      <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="12" y1="20" x2="12" y2="4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="6" y1="20" x2="6" y2="14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <span>Stats</span>
+    </button>
+  </nav>
+
+  <!-- AdMob Banner placeholder (home) -->
+  <div class="admob-banner admob-bottom" id="admobHome" style="display:none">
+    <span>📢 Espaço publicitário</span>
+  </div>
+
+</div>
+
+<!-- MODAL: New Category -->
+<div class="modal-overlay hidden" id="modalCatOverlay">
+  <div class="modal">
+    <h3>Nova Categoria</h3>
+    <input type="text" id="modalCatInput" class="inp" placeholder="Nome da categoria..." />
+    <div class="modal-actions">
+      <button class="btn-outline" id="btnModalCatCancel">Cancelar</button>
+      <button class="btn-primary" id="btnModalCatSave">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast hidden" id="toast"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
