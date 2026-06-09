@@ -1,291 +1,623 @@
-<!DOCTYPE html>
-<html lang="pt" dir="ltr">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <meta name="theme-color" content="#2D6A4F" />
-  <meta name="description" content="Lista de Compras Inteligente — gere as suas compras de forma simples e rápida." />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <meta name="apple-mobile-web-app-title" content="Lista+" />
+<!doctype html>
+<html lang="pt">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lista de Compras Inteligente</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#4CAF50" />
+    <!-- Preconnect link to Inter Google Font for stunning typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  </head>
+  <body class="text-slate-800 antialiased h-screen flex flex-col justify-between">
+    
+    <!-- MAIN INTERFACE CONTAINER -->
+    <div class="flex-1 overflow-y-auto pb-24">
+      
+      <!-- MAIN NAVBAR HEADER -->
+      <header class="bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 sticky top-0 z-30 transition-all">
+        <div class="max-w-4xl mx-auto px-4 py-3.5 flex flex-col md:flex-row md:items-center justify-between gap-3">
+          
+          <!-- Logo & User Segment -->
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 bg-emerald-500 rounded-2xl flex items-center justify-center text-slate-950 font-extrabold shadow-md shadow-emerald-500/25">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                </svg>
+              </div>
+              <div>
+                <h1 class="font-black text-xl text-slate-900 dark:text-white tracking-tight flex items-center gap-1.5 leading-none">
+                  SmartList
+                  <span class="user-premium-tag"></span>
+                </h1>
+                <p class="text-[10px] text-slate-400 font-mono mt-0.5 uppercase tracking-wider">Lista Inteligente</p>
+              </div>
+            </div>
+            
+            <!-- Connection status for offline check -->
+            <div class="md:hidden">
+              <span class="bg-emerald-50 dark:bg-emerald-950/30 text-emerald-500 border border-emerald-500/20 text-[10px] font-bold px-2 py-0.5 rounded-full select-none">
+                ● Offline OK
+              </span>
+            </div>
+          </div>
 
-  <title>Lista de Compras Inteligente</title>
+          <!-- Live Instant Search Bar Input -->
+          <div class="relative flex-1 max-w-md w-full md:ml-auto">
+            <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 fill-none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </span>
+            <input type="text" id="search-lists-products" placeholder="Pesquisar listas, categorias, produtos..." class="w-full pl-11 pr-4 py-2.5 rounded-xl border border-slate-200/80 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:bg-white dark:focus:bg-slate-900 transition-all font-medium text-slate-700 dark:text-slate-250 placeholder-slate-400" />
+          </div>
 
-  <link rel="manifest" href="manifest.json" />
-  <link rel="icon" href="icons/icon-192.png" />
-  <link rel="apple-touch-icon" href="icons/icon-192.png" />
-  <link rel="stylesheet" href="style.css" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
-</head>
-<body>
+          <div class="hidden md:block select-none">
+            <span class="bg-emerald-50 dark:bg-emerald-950/30 text-emerald-500 border border-emerald-500/20 text-[11px] font-semibold px-2.5 py-1 rounded-full">
+              ● Armazenamento Local
+            </span>
+          </div>
 
-<!-- ====== SPLASH SCREEN ====== -->
-<div id="splash" class="splash">
-  <div class="splash-logo">
-    <div class="splash-icon">🛒</div>
-    <h1 class="splash-title">Lista<span>+</span></h1>
-    <p class="splash-sub">Compras inteligentes</p>
-  </div>
-</div>
+        </div>
+      </header>
 
-<!-- ====== APP SHELL ====== -->
-<div id="app" class="app hidden">
+      <!-- VIEWPORTS PANEL WRAPPER -->
+      <main class="max-w-4xl mx-auto px-4 py-6">
 
-  <!-- HEADER -->
-  <header class="app-header" id="appHeader">
-    <div class="header-left">
-      <button class="btn-icon" id="btnMenu" aria-label="Menu">
-        <svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-      </button>
-      <span class="header-logo">Lista<span>+</span></span>
-    </div>
-    <div class="header-right">
-      <button class="btn-icon" id="btnSearch" aria-label="Pesquisar">
-        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/><path d="m21 21-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-      </button>
-      <button class="btn-icon" id="btnInstall" aria-label="Instalar app" style="display:none">
-        <svg viewBox="0 0 24 24"><path d="M12 2v14m0 0-4-4m4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 20h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-      </button>
-    </div>
-  </header>
+        <!-- 1. VIEWPORT: DASHBOARD -->
+        <section id="view-dashboard" class="space-y-6">
+          <div class="flex items-center justify-between">
+            <h2 class="font-extrabold text-2xl text-slate-900 dark:text-white tracking-tight">O meu Painel Inteligente</h2>
+            <button onclick="window.openCreateListDrawer()" class="bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-1.5 transition-all shadow-md shadow-emerald-500/10 cursor-pointer">
+              <!-- Inline icon plus -->
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+              Nova Lista
+            </button>
+          </div>
 
-  <!-- SEARCH BAR -->
-  <div class="search-bar hidden" id="searchBar">
-    <input type="search" id="searchInput" placeholder="Pesquisar produtos, listas..." autocomplete="off" />
-    <button class="btn-icon" id="btnCloseSearch">
-      <svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-    </button>
-  </div>
+          <!-- BENTO STATS GRID CARDS -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            
+            <div class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 p-5 rounded-2xl card-elevation flex flex-col justify-between">
+              <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Listas Ativas</span>
+              <span class="text-3xl font-black text-slate-900 dark:text-white mt-2" id="dash-active-lists">0</span>
+            </div>
 
-  <!-- DRAWER MENU -->
-  <div class="drawer-overlay hidden" id="drawerOverlay"></div>
-  <nav class="drawer hidden" id="drawer">
-    <div class="drawer-header">
-      <span class="drawer-logo">Lista<span>+</span></span>
-      <button class="btn-icon" id="btnCloseDrawer">
-        <svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-      </button>
-    </div>
-    <ul class="drawer-nav">
-      <li><button data-view="home" class="drawer-item active">🏠 Início</button></li>
-      <li><button data-view="favorites" class="drawer-item">⭐ Favoritos</button></li>
-      <li><button data-view="history" class="drawer-item">📋 Histórico</button></li>
-      <li><button data-view="stats" class="drawer-item">📊 Estatísticas</button></li>
-      <li><button data-view="settings" class="drawer-item">⚙️ Definições</button></li>
-    </ul>
-    <div class="drawer-footer">
-      <p>Versão 1.0.0</p>
-    </div>
-  </nav>
+            <div class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 p-5 rounded-2xl card-elevation flex flex-col justify-between">
+              <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Produtos Totais</span>
+              <span class="text-3xl font-black text-slate-900 dark:text-white mt-2" id="dash-total-products">0</span>
+            </div>
 
-  <!-- MAIN CONTENT -->
-  <main class="main-content" id="mainContent">
+            <div class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 p-5 rounded-2xl card-elevation flex flex-col justify-between col-span-2">
+              <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Estado de Artigos</span>
+              <div class="flex items-center justify-between mt-2">
+                <div>
+                  <div class="text-[10px] text-slate-400 font-bold uppercase">Adquiridos</div>
+                  <span class="text-2xl font-black text-emerald-500" id="dash-bought-products">0</span>
+                </div>
+                <div class="border-l border-slate-100 dark:border-slate-800 h-10 mx-2"></div>
+                <div>
+                  <div class="text-[10px] text-slate-400 font-bold uppercase">Pendentes</div>
+                  <span class="text-2xl font-black text-slate-400" id="dash-pending-products">0</span>
+                </div>
+              </div>
+            </div>
 
-    <!-- ===== HOME VIEW ===== -->
-    <section class="view active" id="viewHome">
-      <!-- Stats Summary -->
-      <div class="stats-strip" id="statsStrip" style="display:none">
-        <div class="stat-chip"><span id="statProducts">0</span> produtos</div>
-        <div class="stat-chip bought"><span id="statBought">0</span> comprados</div>
-        <div class="stat-chip money">€<span id="statTotal">0.00</span></div>
-      </div>
+            <div class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 p-5 rounded-2xl card-elevation flex flex-col justify-between col-span-2">
+              <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Custo de Compras</span>
+              <div class="flex items-center justify-between mt-2">
+                <div>
+                  <div class="text-[10px] text-slate-400 font-bold uppercase">Total Estimado</div>
+                  <strong class="text-xl font-black text-slate-800 dark:text-slate-100" id="dash-total-value">0.00€</strong>
+                </div>
+                <div>
+                  <div class="text-[10px] text-slate-400 font-bold uppercase">Total Pago</div>
+                  <strong class="text-xl font-black text-emerald-500" id="dash-bought-value">0.00€</strong>
+                </div>
+              </div>
+            </div>
 
-      <!-- Active List -->
-      <div id="activeListArea" style="display:none">
-        <div class="list-toolbar">
-          <div class="list-title-row">
-            <h2 id="activeListName" class="list-name editable" contenteditable="true" spellcheck="false"></h2>
-            <div class="list-actions">
-              <button class="btn-icon btn-sm" id="btnDuplicateList" title="Duplicar lista">
-                <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" stroke="currentColor" stroke-width="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            <!-- Conclusion Radial Progress Gauge -->
+            <div class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 p-5 rounded-2xl card-elevation flex items-center justify-between col-span-2">
+              <div>
+                <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Conclusão Global</span>
+                <p class="text-xs text-slate-400 mt-1 leading-snug">Rácio geral de artigos colocados no carrinho.</p>
+              </div>
+              <div id="dash-progress-circle" class="shrink-0"></div>
+            </div>
+
+          </div>
+
+          <!-- Section Preview Listas -->
+          <div class="space-y-3.5">
+            <div class="flex items-center justify-between">
+              <h3 class="font-bold text-lg text-slate-800 dark:text-slate-200">Listas Frequentes</h3>
+              <button onclick="window.switchTab('lists')" class="text-emerald-500 font-bold text-xs hover:underline cursor-pointer">Ver Todas →</button>
+            </div>
+            <div id="dash-lists-preview"></div>
+          </div>
+        </section>
+
+        <!-- 2. VIEWPORT: LISTS ACTIVE GRID -->
+        <section id="view-lists" class="hidden space-y-6">
+          <div class="flex items-center justify-between">
+            <h2 class="font-extrabold text-2xl text-slate-900 dark:text-white tracking-tight" id="lists-active-head">As minhas Listas</h2>
+            <button onclick="window.openCreateListDrawer()" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-1.5 transition-all cursor-pointer">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+              Adicionar Lista
+            </button>
+          </div>
+
+          <!-- The main content list display -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="lists-grid"></div>
+        </section>
+
+        <!-- 3. VIEWPORT: ACTIVE SHOPPING LIST DETAIL -->
+        <section id="view-list-detail" class="hidden space-y-6">
+          
+          <!-- Back navigation Breadcrumb Row -->
+          <div class="flex items-center justify-between">
+            <button id="back-to-lists" class="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-500 hover:text-emerald-500 transition-all cursor-pointer">
+              ← Voltar para as Listas
+            </button>
+            
+            <!-- Contextual List Actions menu (Share, PDF, Print) -->
+            <div class="flex items-center gap-1">
+              <button onclick="window.shareListNative()" title="Partilhar" class="p-2.5 hover:bg-white dark:hover:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800 text-slate-500 hover:text-indigo-500 transition-all cursor-pointer">
+                <!-- Inline Share SVG -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8.684 10.748a3.001 3.001 0 110 2.504m0-2.504a3.001 3.001 0 110-2.504m0 2.504l6.632-3.316m-6.632 5.82l6.632 3.316"/></svg>
               </button>
-              <button class="btn-icon btn-sm btn-danger" id="btnDeleteList" title="Apagar lista">
-                <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M19 6l-1 14H6L5 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M10 11v6M14 11v6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              <button onclick="window.printListStandard()" title="Imprimir" class="p-2.5 hover:bg-white dark:hover:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800 text-slate-500 hover:text-emerald-500 transition-all cursor-pointer">
+                <!-- Inline Print SVG -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+              </button>
+              <button onclick="window.exportListToText()" title="Exportar TXT" class="p-2.5 hover:bg-white dark:hover:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800 text-slate-500 hover:text-indigo-505 transition-all cursor-pointer">
+                <!-- Notes text file icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+              </button>
+              <button onclick="window.exportListPDFAdvanced()" title="PDF Premium" class="p-2.5 bg-rose-50 dark:bg-rose-950/20 hover:bg-rose-100 rounded-xl gap-1 text-xs text-rose-500 border border-rose-100/40 font-bold transition-all shadow-sm flex items-center cursor-pointer">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                PDF Premium
               </button>
             </div>
           </div>
-          <!-- Progress bar -->
-          <div class="progress-row">
-            <div class="progress-bar-track"><div class="progress-bar-fill" id="progressFill"></div></div>
-            <span class="progress-pct" id="progressPct">0%</span>
+
+          <!-- Card Header Detail info and estimates -->
+          <div class="bg-gradient-to-r from-emerald-600 to-emerald-500 dark:from-emerald-700 dark:to-emerald-600 text-white p-6 rounded-3xl shadow-lg relative overflow-hidden">
+            <!-- Dynamic subtle design circles -->
+            <div class="absolute -right-10 -bottom-10 w-32 h-32 bg-white/10 rounded-full blur-xl"></div>
+            
+            <span class="text-[10px] uppercase font-black bg-white/20 px-2 py-0.5 rounded-full tracking-widest block w-max select-none">Lista Ativa</span>
+            <h2 class="font-extrabold text-2xl mt-2 tracking-tight block break-words leading-tight" id="detail-list-title">Minha lista</h2>
+            
+            <div class="grid grid-cols-3 gap-3 border-t border-white/20 mt-5 pt-4">
+              <div>
+                <span class="text-[10px] uppercase text-emerald-100 tracking-wide font-medium">Est. Total</span>
+                <p class="text-lg font-extrabold leading-none mt-1" id="detail-stats-estimate">0.00€</p>
+              </div>
+              <div>
+                <span class="text-[10px] uppercase text-emerald-100 tracking-wide font-medium">No Carrinho</span>
+                <p class="text-lg font-extrabold leading-none mt-1" id="detail-stats-concluded">0.00€</p>
+              </div>
+              <div class="text-right">
+                <span class="text-[10px] uppercase text-emerald-100 tracking-wide font-medium">Rácio</span>
+                <p class="text-lg font-black leading-none mt-1" id="detail-stats-counter">0/0 (0%)</p>
+              </div>
+            </div>
+
+            <!-- List Internal Progress tracker bar header element -->
+            <div class="w-full bg-white/25 h-1.5 rounded-full mt-4 overflow-hidden">
+              <div class="bg-white h-full transition-all duration-300 ease-out" id="detail-progress-bar" style="width: 0%;"></div>
+            </div>
           </div>
-        </div>
 
-        <!-- Category filter -->
-        <div class="cat-filter" id="catFilter">
-          <button class="cat-pill active" data-cat="all">Todos</button>
-        </div>
+          <!-- Section Interactive Filters + Adds -->
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white dark:bg-slate-900 p-3 rounded-2xl border border-slate-100 dark:border-slate-800">
+            <!-- Filter Options (Pendente, Comprado, Todos) -->
+            <div class="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none select-none">
+              <button id="filter-btn-all" onclick="window.changeActiveFilter('all')" class="px-4 py-2 text-xs font-bold rounded-xl transition-all tracking-tight bg-emerald-500 text-slate-950 cursor-pointer">
+                Todos
+              </button>
+              <button id="filter-btn-pending" onclick="window.changeActiveFilter('pending')" class="px-4 py-2 text-xs font-bold rounded-xl transition-all tracking-tight bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 cursor-pointer">
+                Pendentes 
+              </button>
+              <button id="filter-btn-bought" onclick="window.changeActiveFilter('bought')" class="px-4 py-2 text-xs font-bold rounded-xl transition-all tracking-tight bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 cursor-pointer">
+                Carrinho
+              </button>
+            </div>
 
-        <!-- Product list -->
-        <ul class="product-list" id="productList"></ul>
-
-        <!-- Add product form -->
-        <div class="add-product-card" id="addProductCard">
-          <h3 class="form-title">Adicionar Produto</h3>
-          <div class="form-row">
-            <input type="text" id="inpName" placeholder="Nome do produto *" class="inp" autocomplete="off" />
-            <button class="btn-fav-toggle" id="btnFavToggle" title="Favorito">⭐</button>
+            <!-- Add products trigger inside detail -->
+            <button onclick="window.openAddProductDrawer()" class="bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-slate-950 px-4 py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition-all shadow-sm cursor-pointer">
+              <!-- Plus inline icon -->
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+              Adicionar Produto
+            </button>
           </div>
-          <div class="form-row">
-            <input type="number" id="inpQty" placeholder="Qtd" class="inp inp-sm" min="0.01" step="0.01" value="1" />
-            <select id="inpUnit" class="inp inp-sm">
-              <option value="un">un</option>
-              <option value="kg">kg</option>
-              <option value="g">g</option>
-              <option value="l">l</option>
-              <option value="ml">ml</option>
-              <option value="cx">cx</option>
-              <option value="pct">pct</option>
-            </select>
-            <input type="number" id="inpPrice" placeholder="€ preço" class="inp inp-sm" min="0" step="0.01" />
+
+          <!-- Quick Horizontal scrolling Favorites Shelf -->
+          <div class="space-y-2">
+            <h4 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Favoritos Frequentes (Adição rápida)</h4>
+            <div id="list-detail-quick-favorites"></div>
           </div>
-          <div class="form-row">
-            <select id="inpCat" class="inp">
-              <option value="Outros">Outros</option>
-              <option value="Frutas">🍎 Frutas</option>
-              <option value="Legumes">🥦 Legumes</option>
-              <option value="Carne">🥩 Carne</option>
-              <option value="Peixe">🐟 Peixe</option>
-              <option value="Lacticínios">🧀 Lacticínios</option>
-              <option value="Congelados">🧊 Congelados</option>
-              <option value="Bebidas">🥤 Bebidas</option>
-              <option value="Higiene">🧴 Higiene</option>
-              <option value="Limpeza">🧹 Limpeza</option>
-            </select>
-            <button class="btn-sm btn-outline" id="btnNewCat">+ Cat.</button>
+
+          <!-- Active Products checklist entries render dynamically here -->
+          <div id="list-detail-items" class="space-y-4"></div>
+
+        </section>
+
+        <!-- 4. VIEWPORT: FAVORITES CONFIGURATION -->
+        <section id="view-favorites" class="hidden space-y-6 animate-fade-in">
+          <div class="flex items-center justify-between">
+            <h2 class="font-extrabold text-2xl text-slate-900 dark:text-white tracking-tight">Produtos Favoritos</h2>
+            <button onclick="window.openEditFavoriteDrawer()" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-1.5 transition-all cursor-pointer">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+              Novo Favorito
+            </button>
           </div>
-          <button class="btn-primary btn-full" id="btnAddProduct">Adicionar à Lista</button>
-        </div>
-      </div>
+          
+          <p class="text-xs text-slate-400 leading-snug">Estes produtos estarão disponíveis na barra de favoritos de qualquer lista de compras aberta para inserção instantânea.</p>
 
-      <!-- Empty state / Lists overview -->
-      <div id="listsOverview">
-        <div class="section-header">
-          <h2 class="section-title">As Minhas Listas</h2>
-        </div>
-        <div class="lists-grid" id="listsGrid"></div>
-        <div class="empty-state" id="emptyState" style="display:none">
-          <div class="empty-icon">🛍️</div>
-          <p>Ainda não tem listas.</p>
-          <p class="empty-sub">Crie a sua primeira lista de compras!</p>
-        </div>
-      </div>
-    </section>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="favorites-grid"></div>
+        </section>
 
-    <!-- ===== FAVORITES VIEW ===== -->
-    <section class="view" id="viewFavorites">
-      <div class="view-header"><h2>⭐ Favoritos</h2></div>
-      <p class="view-desc">Adicione rapidamente os seus produtos favoritos à lista ativa.</p>
-      <ul class="favorites-list" id="favoritesList"></ul>
-      <div class="empty-state" id="favEmpty" style="display:none">
-        <div class="empty-icon">⭐</div>
-        <p>Nenhum favorito ainda.</p>
-        <p class="empty-sub">Marque produtos como ⭐ ao adicioná-los.</p>
-      </div>
-    </section>
+        <!-- 5. VIEWPORT: CATEGORIES CONFIGURATION -->
+        <section id="view-categories" class="hidden space-y-6 animate-fade-in">
+          <div class="flex items-center justify-between">
+            <h2 class="font-extrabold text-2xl text-slate-900 dark:text-white tracking-tight">Categorias de Artigos</h2>
+            <button onclick="window.openAddCategoryDrawer()" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-1.5 transition-all cursor-pointer">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+              Nova Categoria
+            </button>
+          </div>
 
-    <!-- ===== HISTORY VIEW ===== -->
-    <section class="view" id="viewHistory">
-      <div class="view-header"><h2>📋 Histórico</h2></div>
-      <p class="view-desc">Reutilize listas anteriores com um clique.</p>
-      <!-- AdMob placeholder -->
-      <div class="admob-banner" id="admobHistory">
-        <span>📢 Espaço publicitário</span>
-      </div>
-      <ul class="history-list" id="historyList"></ul>
-      <div class="empty-state" id="historyEmpty" style="display:none">
-        <div class="empty-icon">📋</div>
-        <p>Sem histórico ainda.</p>
-      </div>
-    </section>
+          <p class="text-xs text-slate-400 leading-snug">Personalize e edite os agrupamentos categóricos aplicados aos produtos em listas para otimizar estatísticas de custos.</p>
 
-    <!-- ===== STATS VIEW ===== -->
-    <section class="view" id="viewStats">
-      <div class="view-header"><h2>📊 Estatísticas</h2></div>
-      <div class="stats-grid" id="statsGrid">
-        <div class="stat-card"><div class="stat-icon">📋</div><div class="stat-val" id="sTotalLists">0</div><div class="stat-lbl">Listas criadas</div></div>
-        <div class="stat-card"><div class="stat-icon">📦</div><div class="stat-val" id="sTotalProducts">0</div><div class="stat-lbl">Produtos únicos</div></div>
-        <div class="stat-card"><div class="stat-icon">✅</div><div class="stat-val" id="sTotalBought">0</div><div class="stat-lbl">Já comprados</div></div>
-        <div class="stat-card highlight"><div class="stat-icon">💶</div><div class="stat-val">€<span id="sTotalSpent">0.00</span></div><div class="stat-lbl">Estimativa total gasta</div></div>
-        <div class="stat-card"><div class="stat-icon">⭐</div><div class="stat-val" id="sTotalFavs">0</div><div class="stat-lbl">Favoritos</div></div>
-        <div class="stat-card"><div class="stat-icon">🏷️</div><div class="stat-val" id="sTopCat">—</div><div class="stat-lbl">Categoria favorita</div></div>
-      </div>
-    </section>
+          <div class="space-y-3" id="categories-list-container"></div>
+        </section>
 
-    <!-- ===== SETTINGS VIEW ===== -->
-    <section class="view" id="viewSettings">
-      <div class="view-header"><h2>⚙️ Definições</h2></div>
-      <div class="settings-group">
-        <h3>Dados</h3>
-        <button class="btn-outline btn-full" id="btnExportData">📤 Exportar dados (JSON)</button>
-        <button class="btn-outline btn-full danger" id="btnClearAll">🗑️ Limpar todos os dados</button>
-      </div>
-      <div class="settings-group">
-        <h3>Categorias Personalizadas</h3>
-        <div id="customCatsList"></div>
-        <div class="form-row">
-          <input type="text" id="inpNewCatName" placeholder="Nova categoria..." class="inp" />
-          <button class="btn-primary" id="btnSaveCat">Adicionar</button>
-        </div>
-      </div>
-      <div class="settings-group">
-        <h3>Sobre</h3>
-        <p class="settings-info">Lista de Compras Inteligente v1.0.0<br>PWA — funciona offline<br>Preparada para Google AdMob</p>
-      </div>
-    </section>
+        <!-- 6. VIEWPORT: SETTINGS & PREMIUM CONTROLS -->
+        <section id="view-settings" class="hidden space-y-6 animate-fade-in">
+          <h2 class="font-extrabold text-2xl text-slate-900 dark:text-white tracking-tight">Definições da Aplicação</h2>
 
-  </main>
+          <div class="space-y-4">
+            
+            <!-- Bento block segment: Account status -->
+            <div class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 p-5 rounded-2xl card-elevation space-y-4">
+              <h3 class="font-bold text-base text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                🌟 Estado da Conta
+              </h3>
+              <p class="text-xs text-slate-400 leading-snug">O SmartList apoia anúncios AdMob não intrusivos para financiar o desenvolvimento. Ative o simulador premium para remover anúncios de banner e obter extras permanentemente.</p>
+              
+              <div id="settings-premium-sim"></div>
+            </div>
 
-  <!-- BOTTOM NAV -->
-  <nav class="bottom-nav" id="bottomNav">
-    <button class="nav-item active" data-view="home">
-      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="currentColor" stroke-width="2" fill="none"/><polyline points="9 22 9 12 15 12 15 22" stroke="currentColor" stroke-width="2" fill="none"/></svg>
-      <span>Início</span>
-    </button>
-    <button class="nav-item" data-view="favorites">
-      <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" stroke="currentColor" stroke-width="2" fill="none"/></svg>
-      <span>Favoritos</span>
-    </button>
-    <!-- FAB NEW LIST -->
-    <div class="nav-fab-wrap">
-      <button class="nav-fab" id="btnNewList" aria-label="Nova lista">
-        <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+            <!-- Bento block theme selection -->
+            <div class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 p-5 rounded-2xl card-elevation space-y-4">
+              <h3 class="font-bold text-base text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                🎨 Temas de Cor Premium
+              </h3>
+              
+              <div class="grid grid-cols-2 gap-3.5">
+                <button onclick="window.changeAppTheme('default-green')" class="p-3 bg-slate-50 border border-slate-200 hover:border-emerald-500/80 rounded-xl font-bold text-xs text-center cursor-pointer transition-all text-slate-800 flex items-center justify-center gap-2">
+                  <span class="w-4 h-4 rounded-full bg-emerald-500 block"></span>
+                  Verde Esmeralda
+                </button>
+                <button onclick="window.changeAppTheme('carbon-dark')" class="p-3 bg-slate-900 border border-slate-800 hover:border-amber-500 rounded-xl font-bold text-xs text-center cursor-pointer transition-all text-white flex items-center justify-center gap-2">
+                  <span class="w-4 h-4 rounded-full bg-slate-800 block"></span>
+                  Carbono Escuro
+                </button>
+                <button onclick="window.changeAppTheme('deep-ocean')" class="p-3 bg-slate-950 border border-slate-900 hover:border-sky-500 rounded-xl font-bold text-xs text-slate-200 text-center cursor-pointer transition-all flex items-center justify-center gap-2">
+                  <span class="w-4 h-4 rounded-full bg-sky-950 block"></span>
+                  Oceano Profundo
+                </button>
+                <button onclick="window.changeAppTheme('dark-forest')" class="p-3 bg-slate-950 border border-slate-900 hover:border-emerald-700 rounded-xl font-bold text-xs text-emerald-100 text-center cursor-pointer transition-all flex items-center justify-center gap-2">
+                  <span class="w-4 h-4 rounded-full bg-emerald-950 block"></span>
+                  Floresta Dark
+                </button>
+              </div>
+            </div>
+
+            <!-- Bento cloud back up -->
+            <div class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 p-5 rounded-2xl card-elevation space-y-4">
+              <h3 class="font-bold text-base text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                ☁️ Sincronização offline-Nuvem
+              </h3>
+              <p class="text-xs text-slate-400 leading-snug">Armazene as suas listas na Cloud para sincronização universal entre múltiplos dispositivos de forma encriptada (Simulador embutido).</p>
+              
+              <div id="settings-backup-sim"></div>
+            </div>
+
+            <!-- Bento block list import -->
+            <div class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 p-5 rounded-2xl card-elevation space-y-4">
+              <h3 class="font-bold text-base text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                📋 Importação Rápida de Lista
+              </h3>
+              <p class="text-xs text-slate-400 leading-snug">
+                Cole abaixo uma lista de compras existente (uma linha por produto). Ideal para colar do WhatsApp, Notas ou e-mail.
+              </p>
+              
+              <div class="space-y-3">
+                <textarea id="import-pasted-list" rows="5" placeholder="Cole aqui a sua lista, por exemplo:&#10;2x Leite meio gordo&#10;1kg Maçãs Gala 1.99€&#10;Pão de forma&#10;Detergente da loiça" class="w-full text-sm p-3 border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/50 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none dark:text-slate-100 font-sans resize-y placeholder-slate-400"></textarea>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label class="text-[10px] uppercase font-bold text-slate-400 dark:text-slate-500 block mb-1 font-sans">Destino da Importação</label>
+                    <select id="import-destination" class="w-full p-2.5 text-xs bg-slate-50 dark:bg-slate-950 border border-slate-150 dark:border-slate-800 rounded-xl text-slate-800 dark:text-slate-200 font-sans focus:outline-none focus:ring-1 focus:ring-emerald-500" onchange="window.toggleImportNameField()">
+                      <option value="new">Criar uma Nova Lista</option>
+                      <option value="append">Adicionar a uma Lista Existente</option>
+                    </select>
+                  </div>
+                  
+                  <div id="import-new-list-name-container">
+                    <label class="text-[10px] uppercase font-bold text-slate-400 block mb-1">Nome da Nova Lista</label>
+                    <input type="text" id="import-new-list-name" placeholder="Ex: Compras Pastas" class="w-full p-2.5 text-xs bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-xl text-slate-800 dark:text-slate-200">
+                  </div>
+
+                  <div id="import-existing-list-container" class="hidden">
+                    <label class="text-[10px] uppercase font-bold text-slate-400 block mb-1">Selecionar Lista</label>
+                    <select id="import-existing-list" class="w-full p-2.5 text-xs bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-xl text-slate-800 dark:text-slate-200">
+                      <!-- Filled dynamically in renderSettings() -->
+                    </select>
+                  </div>
+                </div>
+
+                <div class="flex items-center justify-end">
+                  <button onclick="window.processPastedList()" class="bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-slate-950 font-bold px-4 py-2.5 rounded-xl transition-all text-xs flex items-center justify-center gap-1.5 cursor-pointer shadow-sm">
+                    <!-- Inline Plus SVG -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+                    Importar Produtos
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Bento database purge actions -->
+            <div class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 p-5 rounded-2xl card-elevation space-y-4">
+              <h3 class="font-bold text-base text-slate-800 dark:text-slate-100">⚙️ Administração Local</h3>
+              <p class="text-xs text-slate-400">Opções puras de manutenção da base de dados local IndexedDB do browser ou APK.</p>
+              
+              <div class="flex flex-wrap items-center gap-2.5">
+                <button onclick="window.clearDatabase()" class="bg-rose-50 dark:bg-rose-950/20 hover:bg-rose-100/90 hover:dark:bg-rose-900/10 text-rose-500 border border-rose-100/50 dark:border-rose-950/40 font-bold px-4 py-2.5 rounded-xl text-xs transition-all cursor-pointer">
+                  Limpar Todos os Dados (Purge)
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+      </main>
+
+    </div>
+
+    <!-- MAIN BOTTOM ADMOB BANNER WRAPPER CONTAINER PLACEHOLDER -->
+    <div id="admob-banner-container" class="fixed bottom-14 left-0 right-0 max-w-4xl mx-auto z-40"></div>
+
+    <!-- MAIN NAV TAB NAVIGATION BAR -->
+    <nav class="bg-white dark:bg-slate-950 border-t border-slate-100 dark:border-slate-850 fixed bottom-0 left-0 right-0 max-w-4xl mx-auto h-14 flex items-center justify-around px-4 z-50 text-slate-500 select-none shadow-lg">
+      
+      <button id="tab-btn-dashboard" class="tab-btn text-emerald-500 font-bold flex flex-col items-center justify-center flex-1 h-full py-2 hover:bg-slate-50 dark:hover:bg-slate-900/30 transition-all select-none cursor-pointer">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+        <span class="text-[9px] mt-0.5">Painel</span>
       </button>
-    </div>
-    <button class="nav-item" data-view="history">
-      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/><polyline points="12 6 12 12 16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
-      <span>Histórico</span>
+
+      <button id="tab-btn-lists" class="tab-btn flex flex-col items-center justify-center flex-1 h-full py-2 hover:bg-slate-50 dark:hover:bg-slate-900/30 transition-all select-none cursor-pointer">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+        <span class="text-[9px] mt-0.5">Listas</span>
+      </button>
+
+      <button id="tab-btn-favorites" class="tab-btn flex flex-col items-center justify-center flex-1 h-full py-2 hover:bg-slate-50 dark:hover:bg-slate-900/30 transition-all select-none cursor-pointer">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.907c.961 0 1.36 1.24.588 1.81l-3.97 2.883a1 1 0 00-.364 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.971-2.883a1 1 0 00-1.176 0l-3.97 2.883c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.364-1.118L2.49 11.1c-.773-.57-.375-1.81.588-1.81h4.908a1 1 0 00.951-.69l1.519-4.674z"/></svg>
+        <span class="text-[9px] mt-0.5">Favoritos</span>
+      </button>
+
+      <button id="tab-btn-categories" class="tab-btn flex flex-col items-center justify-center flex-1 h-full py-2 hover:bg-slate-50 dark:hover:bg-slate-900/30 transition-all select-none cursor-pointer">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 7h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+        <span class="text-[9px] mt-0.5">Categorias</span>
+      </button>
+
+      <button id="tab-btn-history" class="tab-btn flex flex-col items-center justify-center flex-1 h-full py-2 hover:bg-slate-50 dark:hover:bg-slate-900/30 transition-all select-none cursor-pointer">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <span class="text-[9px] mt-0.5">Histórico</span>
+      </button>
+
+      <button id="tab-btn-settings" class="tab-btn flex flex-col items-center justify-center flex-1 h-full py-2 hover:bg-slate-50 dark:hover:bg-slate-900/30 transition-all select-none cursor-pointer">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        <span class="text-[9px] mt-0.5">Definições</span>
+      </button>
+
+    </nav>
+
+    <!-- MOBILE FLOATING ACTION TRIGGER COMPONENT (FAB) on primary active list view only -->
+    <button id="fab-add-list" class="fixed bottom-16 right-5 w-14 h-14 bg-emerald-500 hover:bg-emerald-600 font-extrabold text-[#000] rounded-full flex items-center justify-center shadow-xl shadow-emerald-500/30 z-[49] cursor-pointer hover:scale-110 active:scale-95 transition-all">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
     </button>
-    <button class="nav-item" data-view="stats">
-      <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="12" y1="20" x2="12" y2="4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="6" y1="20" x2="6" y2="14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-      <span>Stats</span>
-    </button>
-  </nav>
 
-  <!-- AdMob Banner placeholder (home) -->
-  <div class="admob-banner admob-bottom" id="admobHome" style="display:none">
-    <span>📢 Espaço publicitário</span>
-  </div>
 
-</div>
+    <!-- ============================================== -->
+    <!-- OVERLAY SHEET DRAWERS SECTION                  -->
+    <!-- ============================================== -->
 
-<!-- MODAL: New Category -->
-<div class="modal-overlay hidden" id="modalCatOverlay">
-  <div class="modal">
-    <h3>Nova Categoria</h3>
-    <input type="text" id="modalCatInput" class="inp" placeholder="Nome da categoria..." />
-    <div class="modal-actions">
-      <button class="btn-outline" id="btnModalCatCancel">Cancelar</button>
-      <button class="btn-primary" id="btnModalCatSave">Guardar</button>
+    <!-- DRAWER 1: CREATE NEW LIST -->
+    <div id="add-list-drawer" class="fixed inset-0 bg-slate-950/60 z-[999] backdrop-blur-sm invisible opacity-0 flex items-end justify-center transition-all duration-300 drawer-overlay">
+      <div class="bottom-sheet bg-white dark:bg-slate-900 max-w-lg w-full p-6 animate-slide-up space-y-4">
+        <div class="w-12 h-1.5 bg-slate-200 dark:bg-slate-800 rounded-full mx-auto mb-2"></div>
+        <h3 class="font-bold text-lg text-slate-800 dark:text-slate-100">Criar Nova Lista de Compras</h3>
+        <form id="form-add-list" class="space-y-4">
+          <div class="space-y-1.5">
+            <label class="text-xs font-bold text-slate-400 uppercase">Nome da Lista</label>
+            <input type="text" id="add-list-name" placeholder="Ex: Supermercado Semanal, Churrasco..." required class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/50" />
+          </div>
+          <div class="flex items-center gap-2 pt-2">
+            <button type="button" id="cancel-add-list" class="flex-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-600 dark:text-slate-300 font-semibold py-3 rounded-xl transition-all text-sm cursor-pointer">Cancelar</button>
+            <button type="submit" class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-3 rounded-xl transition-all text-sm shadow-sm cursor-pointer">Adicionar Lista</button>
+          </div>
+        </form>
+      </div>
     </div>
-  </div>
-</div>
 
-<!-- TOAST -->
-<div class="toast hidden" id="toast"></div>
+    <!-- DRAWER 2: EDIT LIST NAME -->
+    <div id="edit-list-drawer" class="fixed inset-0 bg-slate-950/60 z-[999] backdrop-blur-sm invisible opacity-0 flex items-end justify-center transition-all duration-300 drawer-overlay">
+      <div class="bottom-sheet bg-white dark:bg-slate-900 max-w-lg w-full p-6 animate-slide-up space-y-4">
+        <div class="w-12 h-1.5 bg-slate-200 dark:bg-slate-800 rounded-full mx-auto mb-2"></div>
+        <h3 class="font-bold text-lg text-slate-800 dark:text-slate-100">Editar Nome da Lista</h3>
+        <form id="form-edit-list" class="space-y-4">
+          <input type="hidden" id="edit-list-id" />
+          <div class="space-y-1.5">
+            <label class="text-xs font-bold text-slate-400 uppercase">Novo Nome da Lista</label>
+            <input type="text" id="edit-list-name" required class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/50" />
+          </div>
+          <div class="flex items-center gap-2 pt-2">
+            <button type="button" id="cancel-edit-list" class="flex-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-semibold py-3 rounded-xl transition-all text-sm cursor-pointer">Cancelar</button>
+            <button type="submit" class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-3 rounded-xl transition-all text-sm shadow-sm cursor-pointer">Salvar Alterações</button>
+          </div>
+        </form>
+      </div>
+    </div>
 
-<script src="app.js"></script>
-</body>
+    <!-- DRAWER 3: ADD/EDIT PRODUCT ON LIST -->
+    <div id="add-product-drawer" class="fixed inset-0 bg-slate-950/60 z-[999] backdrop-blur-sm invisible opacity-0 flex items-end justify-center transition-all duration-300 drawer-overlay">
+      <div class="bottom-sheet bg-white dark:bg-slate-900 max-w-lg w-full p-6 animate-slide-up space-y-4 overflow-y-auto">
+        <div class="w-12 h-1.5 bg-slate-200 dark:bg-slate-800 rounded-full mx-auto mb-1"></div>
+        <h3 class="font-bold text-lg text-slate-800 dark:text-slate-100" id="add-product-drawer-head">Adicionar Novo Produto</h3>
+        <form id="form-add-product" class="space-y-3">
+          <input type="hidden" id="add-product-id" />
+          
+          <div class="space-y-1">
+            <label class="text-[10px] font-bold text-slate-400 uppercase">Nome do Produto *</label>
+            <input type="text" id="add-product-name" placeholder="Ex: Iogurte Grego, Laranjas..." required class="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-800/90 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm" />
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div class="space-y-1">
+              <label class="text-[10px] font-bold text-slate-400 uppercase">Quantidade</label>
+              <input type="number" id="add-product-qty" step="any" min="0.01" value="1" required class="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm" />
+            </div>
+            <div class="space-y-1">
+              <label class="text-[10px] font-bold text-slate-400 uppercase">Unidade</label>
+              <select id="add-product-unit" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm">
+                <option value="Un">Unidade(s)</option>
+                <option value="Kg">Quilograma(s)</option>
+                <option value="L">Litro(s)</option>
+                <option value="Pacote">Pacote(s)</option>
+                <option value="Caixa">Caixa(s)</option>
+                <option value="Grama">Grama(s)</option>
+                <option value="Lata">Lata(s)</option>
+                <option value="Pack">Pack</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div class="space-y-1">
+              <label class="text-[10px] font-bold text-slate-400 uppercase">Preço Un. Estimado (€)</label>
+              <input type="number" id="add-product-price" step="0.01" min="0" value="0.00" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm" />
+            </div>
+            <div class="space-y-1">
+              <label class="text-[10px] font-bold text-slate-400 uppercase">Categoria</label>
+              <select id="add-product-category" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"></select>
+            </div>
+          </div>
+
+          <div class="space-y-1">
+            <label class="text-[10px] font-bold text-slate-400 uppercase">Observações opcionais</label>
+            <input type="text" id="add-product-note" placeholder="Ex: Marca própria, embalagem familiar..." class="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm" />
+          </div>
+
+          <div class="flex items-center gap-2 pt-2">
+            <button type="button" id="cancel-add-product" class="flex-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-semibold py-3 rounded-xl transition-all text-sm cursor-pointer">Cancelar</button>
+            <button type="submit" class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-3 rounded-xl transition-all text-sm shadow-sm cursor-pointer">Completar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- DRAWER 4: EDIT FAVORITE DETAILS -->
+    <div id="edit-favorite-drawer" class="fixed inset-0 bg-slate-950/60 z-[999] backdrop-blur-sm invisible opacity-0 flex items-end justify-center transition-all duration-300 drawer-overlay">
+      <div class="bottom-sheet bg-white dark:bg-slate-900 max-w-lg w-full p-6 animate-slide-up space-y-4">
+        <div class="w-12 h-1.5 bg-slate-200 dark:bg-slate-800 rounded-full mx-auto mb-2"></div>
+        <h3 class="font-bold text-lg text-slate-800 dark:text-slate-100">Configurar Artigo Favorito</h3>
+        <form onsubmit="window.saveFavoriteItem(event)" class="space-y-3">
+          <input type="hidden" id="fav-edit-id" />
+          
+          <div class="space-y-1">
+            <label class="text-[10px] font-bold text-slate-400 uppercase">Nome do Produto</label>
+            <input type="text" id="fav-edit-name" required class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200 text-sm" />
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div class="space-y-1">
+              <label class="text-[10px] font-bold text-slate-400 uppercase">Quantidade Padrão</label>
+              <input type="number" id="fav-edit-qty" step="any" min="0.01" required class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200 text-sm" />
+            </div>
+            <div class="space-y-1">
+              <label class="text-[10px] font-bold text-slate-400 uppercase">Unidade Padrão</label>
+              <select id="fav-edit-unit" class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200 text-sm">
+                <option value="Un">Unidade(s)</option>
+                <option value="Kg">Quilograma(s)</option>
+                <option value="L">Litro(s)</option>
+                <option value="Pacote">Pacote(s)</option>
+                <option value="Caixa">Caixa(s)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div class="space-y-1">
+              <label class="text-[10px] font-bold text-slate-400 uppercase">Preço Padrão (€)</label>
+              <input type="number" id="fav-edit-price" step="0.01" class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200 text-sm" />
+            </div>
+            <div class="space-y-1">
+              <label class="text-[10px] font-bold text-slate-400 uppercase">Categoria</label>
+              <select id="fav-edit-category" class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200 text-sm">
+                <option value="Frutas">Frutas</option>
+                <option value="Legumes">Legumes</option>
+                <option value="Carne">Carne</option>
+                <option value="Peixe">Peixe</option>
+                <option value="Lacticínios">Lacticínios</option>
+                <option value="Bebidas">Bebidas</option>
+                <option value="Padaria">Padaria</option>
+                <option value="Outros">Outros</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2 pt-2">
+            <button type="button" onclick="window.UIManager.closeDrawer('edit-favorite-drawer')" class="flex-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-semibold py-3 rounded-xl transition-all text-sm cursor-pointer">Cancelar</button>
+            <button type="submit" class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-3 rounded-xl transition-all text-sm shadow-sm cursor-pointer">Salvar Favorito</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- DRAWER 5: CREATE CUSTOM CATEGORY -->
+    <div id="add-category-drawer" class="fixed inset-0 bg-slate-950/60 z-[999] backdrop-blur-sm invisible opacity-0 flex items-end justify-center transition-all duration-300 drawer-overlay">
+      <div class="bottom-sheet bg-white dark:bg-slate-900 max-w-lg w-full p-6 animate-slide-up space-y-4">
+        <div class="w-12 h-1.5 bg-slate-200 dark:bg-slate-800 rounded-full mx-auto mb-2"></div>
+        <h3 class="font-bold text-lg text-slate-800 dark:text-slate-100">Criar Nova Categoria</h3>
+        <form id="form-add-category" class="space-y-4">
+          <div class="space-y-1.5">
+            <label class="text-xs font-bold text-slate-400 uppercase">Nome da Categoria</label>
+            <input type="text" id="add-category-name" placeholder="Ex: Queijaria, Congelados..." required class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-800/90 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/50" />
+          </div>
+          <div class="space-y-1.5">
+            <label class="text-xs font-bold text-slate-400 uppercase">Cor Identificadora</label>
+            <input type="color" id="add-category-color" value="#4CAF50" class="w-full h-12 p-1 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 cursor-pointer" />
+          </div>
+          <div class="flex items-center gap-2 pt-2">
+            <button type="button" id="cancel-add-category" class="flex-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-semibold py-3 rounded-xl transition-all text-sm cursor-pointer">Cancelar</button>
+            <button type="submit" class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-3 rounded-xl transition-all text-sm shadow-sm cursor-pointer">Salvar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- ROOT MODULE SCRIPT CENTRAL ENUM -->
+    <script type="module" src="/js/app.js"></script>
+
+  </body>
 </html>
